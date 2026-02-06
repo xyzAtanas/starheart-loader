@@ -24,7 +24,6 @@ local Window = Rayfield:CreateWindow({
 
 game.Players.LocalPlayer.PlayerGui.UI.Main.objective.Text = "Thank you for using Starheart! ⭐💖"
 
--- MAIN TAB (MOVEMENT)
 local Tab = Window:CreateTab("Stars Align", "pin")
 
 local Settings = {
@@ -178,6 +177,43 @@ local JumpInput = Tab:CreateInput({
           Settings.JumpPower = num
       end
    end,
+})
+
+local Section = Tab:CreateSection("Stars")
+
+local Button = Tab:CreateButton({
+    Name = "Teleport to Fit for a King star",
+    Callback = function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(124, 334, -2625))
+    end,
+})
+
+local Button = Tab:CreateButton({
+    Name = "Teleport to No Fun in the Dungeon star",
+    Callback = function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-41, 215, -1012))
+    end,
+})
+
+local Button = Tab:CreateButton({
+    Name = "Teleport to Time Ticking Triumph star",
+    Callback = function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(459, 425, -234))
+    end,
+})
+
+local Button = Tab:CreateButton({
+    Name = "Teleport to The Land that Time Forgot star",
+    Callback = function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(143, 164, 2094))
+    end,
+})
+
+local Button = Tab:CreateButton({
+    Name = "Teleport to Around the Garden Wall star",
+    Callback = function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(784, 210, -799))
+    end,
 })
 
 local Section = Tab:CreateSection("Tears")
