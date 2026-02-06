@@ -1,6 +1,6 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
-    Name = "Starheart",
+    Name = "Starheart - Tick Tock Gardens",
     Icon = 105195470942547,
     LoadingTitle = "French fry loader",
     LoadingSubtitle = "by Atanas",
