@@ -24,7 +24,6 @@ local Window = Rayfield:CreateWindow({
 
 game.Players.LocalPlayer.PlayerGui.UI.Main.objective.Text = "Thank you for using Starheart! ⭐💖"
 
--- MAIN TAB (MOVEMENT)
 local Tab = Window:CreateTab("Stars Align", "pin")
 
 local Settings = {
@@ -37,7 +36,6 @@ local Settings = {
 local lp = game.Players.LocalPlayer
 local runService = game:GetService("RunService")
 
--- Main Logic Loop (Speed & Jump)
 runService.Heartbeat:Connect(function()
     pcall(function()
         local character = lp.Character
@@ -49,15 +47,12 @@ runService.Heartbeat:Connect(function()
 
         if Settings.SpeedEnabled then
             if humanoid.MoveDirection.Magnitude > 0 then
-                -- Active Movement: Force the velocity in the direction of input
                 rootPart.AssemblyLinearVelocity = Vector3.new(
                     humanoid.MoveDirection.X * Settings.Velocity,
                     rootPart.AssemblyLinearVelocity.Y,
                     humanoid.MoveDirection.Z * Settings.Velocity
                 )
             else
-                -- Stopping Logic: Force horizontal velocity to 0 so you don't "slide" 
-                -- or get pushed by the game's default acceleration/friction
                 rootPart.AssemblyLinearVelocity = Vector3.new(
                     0, 
                     rootPart.AssemblyLinearVelocity.Y, 
@@ -71,9 +66,6 @@ end)
  local lp = game.Players.LocalPlayer
 
 local runService = game:GetService("RunService")
-
-
--- Main Logic Loop
 
 runService.Heartbeat:Connect(function()
 
@@ -145,7 +137,6 @@ local SpeedToggle = Tab:CreateToggle({
    end,
 })
 
--- Replaced Slider with Input (TextBox)
 local SpeedInput = Tab:CreateInput({
    Name = "Walk Velocity",
    PlaceholderText = "Default: 50",
@@ -167,7 +158,6 @@ local JumpToggle = Tab:CreateToggle({
    end,
 })
 
--- Replaced Slider with Input (TextBox)
 local JumpInput = Tab:CreateInput({
    Name = "Jump Force",
    PlaceholderText = "Default: 100",
@@ -241,7 +231,7 @@ local Toggle = Tab:CreateToggle({
    Callback = function(Value)
       AutoTeleportEnabled = Value
       if AutoTeleportEnabled then
-         refreshParts() -- Scan before starting
+         refreshParts()
          if #purpleParts == 0 then
             Rayfield:Notify({Title = "Error", Content = "No missing tears found!", Duration = 3})
             return
@@ -256,7 +246,6 @@ local Toggle = Tab:CreateToggle({
                local character = player.Character
                
                if character and character:FindFirstChild("HumanoidRootPart") then
-                  -- Teleporting
                   character.HumanoidRootPart.CFrame = targetPart.CFrame * CFrame.new(0, 3, 0)
                   
                   Rayfield:Notify({
@@ -266,7 +255,7 @@ local Toggle = Tab:CreateToggle({
                   })
                end
                
-               task.wait(1.5) -- 1.5s delay to be safer than 1s
+               task.wait(1.5)
             end
             
             if currentIndex >= #purpleParts then
