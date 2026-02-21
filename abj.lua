@@ -65,9 +65,6 @@ end)
 
 local runService = game:GetService("RunService")
 
-
--- Main Logic Loop
-
 runService.Heartbeat:Connect(function()
 
     pcall(function()
@@ -158,7 +155,6 @@ local JumpToggle = Tab:CreateToggle({
    end,
 })
 
--- Replaced Slider with Input (TextBox)
 local JumpInput = Tab:CreateInput({
    Name = "Jump Force",
    PlaceholderText = "Default: 100",
