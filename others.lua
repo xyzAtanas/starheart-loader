@@ -22,8 +22,6 @@ local Window = Rayfield:CreateWindow({
     KeySystem = false,
 })
 
-game.Players.LocalPlayer.PlayerGui.UI.Main.objective.Text = "Thank you for using Starheart! ⭐💖"
-
 local Tab = Window:CreateTab("Stars Align", "pin")
 
 local Settings = {
