@@ -8,10 +8,6 @@ local Window = WindUI:CreateWindow({
     Size = UDim2.fromOffset(580, 460),
     Transparent = true,
     Theme = "Dark",
-	Topbar = {
-		Height = 44,
-		ButtonsType = "Mac", -- Default or Mac
-	},
 })
 local Settings = {
     SpeedEnabled = false,
