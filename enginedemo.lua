@@ -1,6 +1,6 @@
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 local Window = WindUI:CreateWindow({
-    Title = "Starheart",
+    Title = "Starheart - Engine Demo",
     Icon = "star",
     Author = "by Atanas",
     Folder = "Starheart",
