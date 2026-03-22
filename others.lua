@@ -8,6 +8,35 @@ local Window = WindUI:CreateWindow({
     Transparent = true,
     Theme = "Dark",
 })
+
+Window:EditOpenButton({
+    Title = "Open Starheart",
+    Icon = "star",
+    CornerRadius = UDim.new(0,16),
+    StrokeThickness = 2,
+    Color = ColorSequence.new( -- gradient
+        Color3.fromHex("C9E3FF")
+    ),
+    OnlyMobile = false,
+    Enabled = true,
+	Draggable = false
+})
+
+Window:SetToggleKey(Enum.KeyCode.K)
+
+Window:Tag({
+    Title = "v4.1",
+    Color = Color3.fromHex("#30ff6a"),
+})
+
+Window:OnClose(function()
+    WindUI:Notify({
+    	Title = "Want to open the UI again?",
+    	Content = "Press K on your keyboard!",
+    	Duration = 3,
+    	Icon = "door-open",
+	})
+end)
 local Settings = {
     SpeedEnabled = false,
     Velocity = 50,
