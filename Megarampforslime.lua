@@ -4,8 +4,6 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
-
--- Load WindUI
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
 local Window = WindUI:CreateWindow({
@@ -18,9 +16,19 @@ local Window = WindUI:CreateWindow({
     Theme = "Dark",
 })
 
+Window:SetToggleKey(Enum.KeyCode.K)
+
+Window:OnClose(function()
+    WindUI:Notify({
+    	Title = "Want to open the UI again?",
+    	Content = "Press K on your keyboard!",
+    	Duration = 3,
+    	Icon = "door-open",
+	})
+end)
 
 Window:Tag({
-    Title = "v1.0",
+    Title = "v1.1",
     Color = Color3.fromHex("#30ff6a"),
 })
 
@@ -37,7 +45,6 @@ local Tab = Window:Tab({
 local autoRunning = false
 local currentCheckpoint = 1
 
--- Finds the player's Checkpoints folder automatically
 local function getParkourFolder()
     local folderName = "LOCAL_MINI_PARKOUR_" .. LocalPlayer.Name
     local mainFolder = Workspace:FindFirstChild(folderName)
@@ -46,7 +53,6 @@ local function getParkourFolder()
     return mainFolder:FindFirstChild("Checkpoints")
 end
 
--- Unseats the player if currently sitting
 local function unseatPlayer()
     local character = LocalPlayer.Character
     if not character then return end
@@ -58,7 +64,6 @@ local function unseatPlayer()
     end
 end
 
--- Teleports character to a given part
 local function teleportTo(part)
     local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local hrp = character:FindFirstChild("HumanoidRootPart")
@@ -76,7 +81,6 @@ local function teleportTo(part)
     end
 end
 
--- Teleport by checkpoint number
 local function teleportToNumber(num)
     local folder = getParkourFolder()
     if not folder then return false end
@@ -89,7 +93,6 @@ local function teleportToNumber(num)
     return false
 end
 
--- Main auto-advance loop
 local function startAutoAdvance()
     autoRunning = true
     unseatPlayer()
@@ -99,7 +102,7 @@ local function startAutoAdvance()
             local success = teleportToNumber(currentCheckpoint)
 
             if success then
-                unseatPlayer() -- unsit after every checkpoint teleport
+                unseatPlayer()
 
                 WindUI:Notify({
                     Title = "Auto Complete",
@@ -118,7 +121,6 @@ local function startAutoAdvance()
                     break
                 end
             else
-                -- checkpoint not found, stop to avoid spamming
                 autoRunning = false
                 WindUI:Notify({
                     Title = "Auto TP Stopped",
@@ -153,7 +155,7 @@ Tab:Toggle({
     Default = false,
     Callback = function(state)
         if state then
-            currentCheckpoint = 1 -- reset to start; remove this line to resume from last position
+            currentCheckpoint = 1
             startAutoAdvance()
         else
             stopAutoAdvance()
@@ -161,7 +163,6 @@ Tab:Toggle({
     end
 })
 
--- Debug button: lists everything inside Checkpoints if something's still off
 Tab:Button({
     Title = "Debug: List Checkpoints",
     Callback = function()
@@ -183,11 +184,6 @@ Tab:Button({
     end
 })
 
-----------------------------------------------------------------
--- Main Tab: Speed Changer + Vehicle Fly
-----------------------------------------------------------------
-
--- ===== Speed Changer =====
 local function getHumanoid()
     local character = LocalPlayer.Character
     if not character then return nil end
@@ -208,7 +204,6 @@ MainTab:Slider({
             humanoid.WalkSpeed = value
         end
 
-        -- keep speed applied across respawns
         LocalPlayer.CharacterAdded:Connect(function(char)
             task.wait(0.5)
             local hum = char:FindFirstChildOfClass("Humanoid")
@@ -219,7 +214,6 @@ MainTab:Slider({
     end
 })
 
--- ===== Vehicle Fly =====
 local vehicleFlying = false
 local flyConnection = nil
 local flySpeed = 60
@@ -234,7 +228,6 @@ local function getSeatVehiclePart()
     local seatPart = humanoid.SeatPart
     if not seatPart then return nil end
 
-    -- try to get the whole vehicle model's primary part, fallback to the seat itself
     local model = seatPart:FindFirstAncestorOfClass("Model")
     if model and model.PrimaryPart then
         return model.PrimaryPart, model
@@ -272,7 +265,6 @@ local function startVehicleFly()
 
         local currentVehiclePart = getSeatVehiclePart()
         if not currentVehiclePart or currentVehiclePart ~= vehiclePart then
-            -- player left the seat or vehicle changed; stop flying
             vehicleFlying = false
             return
         end
@@ -346,6 +338,43 @@ MainTab:Toggle({
             startVehicleFly()
         else
             stopVehicleFly()
+        end
+    end
+})
+
+local Minigame1Tab = Window:Tab({
+    Title = "Memory Slime",
+    Icon = "brain",
+})
+
+Minigame1Tab:Button({
+    Title = "Reveal Slime",
+    Callback = function()
+        local player = game:GetService("Players").LocalPlayer
+        local gui = player:WaitForChild("PlayerGui"):FindFirstChild("MiniGame1MemoryGui")
+
+        if not gui then return end
+
+        local function shouldReveal(obj)
+            return obj:IsA("TextLabel") and obj.Text ~= "✓"
+        end
+
+        for _, obj in ipairs(gui:GetDescendants()) do
+            if shouldReveal(obj) then
+                obj.Visible = true
+            end
+        end
+
+        if not gui:FindFirstChild("RevealConnectionSet") then
+            local tag = Instance.new("BoolValue")
+            tag.Name = "RevealConnectionSet"
+            tag.Parent = gui
+
+            gui.DescendantAdded:Connect(function(obj)
+                if shouldReveal(obj) then
+                    obj.Visible = true
+                end
+            end)
         end
     end
 })
