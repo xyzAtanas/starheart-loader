@@ -16,6 +16,19 @@ local Window = WindUI:CreateWindow({
     Theme = "Dark",
 })
 
+Window:EditOpenButton({
+    Title = "Open Starheart",
+    Icon = "star",
+    CornerRadius = UDim.new(0,16),
+    StrokeThickness = 2,
+    Color = ColorSequence.new( -- gradient
+        Color3.fromHex("C9E3FF")
+    ),
+    OnlyMobile = false,
+    Enabled = true,
+	Draggable = false
+})
+
 Window:SetToggleKey(Enum.KeyCode.K)
 
 Window:OnClose(function()
