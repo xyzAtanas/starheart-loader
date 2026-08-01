@@ -8,7 +8,7 @@ local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/rel
 
 local Window = WindUI:CreateWindow({
     Title = "Starheart - Mega Ramp for Slime",
-    Icon = "astroid",
+    Icon = "star",
     Author = "By Atanas",
     Folder = "Starheart",
     Size = UDim2.fromOffset(580, 460),
@@ -18,7 +18,7 @@ local Window = WindUI:CreateWindow({
 
 Window:EditOpenButton({
     Title = "Open Starheart",
-    Icon = "astroid",
+    Icon = "star",
     CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,
     Color = ColorSequence.new(
@@ -41,9 +41,23 @@ Window:OnClose(function()
 end)
 
 Window:Tag({
-    Title = "v1.2",
+    Title = "v1.3",
     Color = Color3.fromHex("#30ff6a"),
 })
+
+local TweenService = game:GetService("TweenService")
+local part = workspace:WaitForChild("Progetto"):WaitForChild("Checkpoints"):WaitForChild("82")
+local targetPosition = Vector3.new(-5, 201, -1250)
+local moveTime = 0
+local tweenInfo = TweenInfo.new(
+    moveTime,
+    Enum.EasingStyle.Quad,
+    Enum.EasingDirection.Out
+)
+
+local goal = { Position = targetPosition }
+
+local tween = TweenService:Create(part, tweenInfo, goal)
 
 local MainTab = Window:Tab({
     Title = "Main",
@@ -481,6 +495,13 @@ MainTab:Toggle({
         else
             stopVehicleFly()
         end
+    end
+})
+
+MainTab:Button({
+    Title = "x500,000 luck every time",
+    Callback = function()
+        tween:Play()
     end
 })
 
