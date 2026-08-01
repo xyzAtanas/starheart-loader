@@ -1,7 +1,7 @@
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 local Window = WindUI:CreateWindow({
     Title = "Starheart - Other",
-    Icon = "star",
+    Icon = "astroid",
     Author = "by Atanas",
     Folder = "Starheart",
     Size = UDim2.fromOffset(580, 460),
@@ -11,10 +11,10 @@ local Window = WindUI:CreateWindow({
 
 Window:EditOpenButton({
     Title = "Open Starheart",
-    Icon = "star",
+    Icon = "astroid",
     CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,
-    Color = ColorSequence.new( -- gradient
+    Color = ColorSequence.new(
         Color3.fromHex("C9E3FF")
     ),
     OnlyMobile = false,
