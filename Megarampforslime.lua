@@ -8,7 +8,7 @@ local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/rel
 
 local Window = WindUI:CreateWindow({
     Title = "Starheart - Mega Ramp for Slime",
-    Icon = "star",
+    Icon = "astroid",
     Author = "By Atanas",
     Folder = "Starheart",
     Size = UDim2.fromOffset(580, 460),
@@ -18,10 +18,10 @@ local Window = WindUI:CreateWindow({
 
 Window:EditOpenButton({
     Title = "Open Starheart",
-    Icon = "star",
+    Icon = "astroid",
     CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,
-    Color = ColorSequence.new( -- gradient
+    Color = ColorSequence.new(
         Color3.fromHex("C9E3FF")
     ),
     OnlyMobile = false,
@@ -58,7 +58,6 @@ local Tab = Window:Tab({
 local autoRunning = false
 local currentCheckpoint = 1
 
--- Finds the player's Checkpoints folder automatically
 local function getParkourFolder()
     local folderName = "LOCAL_MINI_PARKOUR_" .. LocalPlayer.Name
     local mainFolder = Workspace:FindFirstChild(folderName)
@@ -67,7 +66,6 @@ local function getParkourFolder()
     return mainFolder:FindFirstChild("Checkpoints")
 end
 
--- Unseats the player if currently sitting
 local function unseatPlayer()
     local character = LocalPlayer.Character
     if not character then return end
@@ -79,7 +77,6 @@ local function unseatPlayer()
     end
 end
 
--- Teleports character to a given part
 local function teleportTo(part)
     local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local hrp = character:FindFirstChild("HumanoidRootPart")
@@ -97,7 +94,6 @@ local function teleportTo(part)
     end
 end
 
--- Teleport by checkpoint number
 local function teleportToNumber(num)
     local folder = getParkourFolder()
     if not folder then return false end
@@ -110,7 +106,6 @@ local function teleportToNumber(num)
     return false
 end
 
--- Core auto-advance loop (blocking - runs until done or stopped)
 local function runAutoAdvanceOnce()
     autoRunning = true
     unseatPlayer()
@@ -119,7 +114,7 @@ local function runAutoAdvanceOnce()
         local success = teleportToNumber(currentCheckpoint)
 
         if success then
-            unseatPlayer() -- unsit after every checkpoint teleport
+            unseatPlayer()
 
             WindUI:Notify({
                 Title = "Auto TP",
@@ -138,7 +133,6 @@ local function runAutoAdvanceOnce()
                 break
             end
         else
-            -- checkpoint not found, stop to avoid spamming
             autoRunning = false
             WindUI:Notify({
                 Title = "Auto TP Stopped",
@@ -152,7 +146,6 @@ local function runAutoAdvanceOnce()
     end
 end
 
--- Non-blocking wrapper used by the manual toggle
 local function startAutoAdvance()
     task.spawn(runAutoAdvanceOnce)
 end
@@ -177,7 +170,7 @@ Tab:Toggle({
     Default = false,
     Callback = function(state)
         if state then
-            currentCheckpoint = 1 -- reset to start; remove this line to resume from last position
+            currentCheckpoint = 1
             startAutoAdvance()
         else
             stopAutoAdvance()
@@ -185,7 +178,6 @@ Tab:Toggle({
     end
 })
 
--- ===== ProximityPrompt (start/reset the run) =====
 local function getStartPrompt()
     local progetto = Workspace:FindFirstChild("Progetto")
     if not progetto then return nil end
@@ -193,7 +185,7 @@ local function getStartPrompt()
     local enter = progetto:FindFirstChild("MiniParkourEnter")
     if not enter then return nil end
 
-    local prompt = enter:FindFirstChild("MiniParkourPrompt", true) -- recursive, in case it's nested
+    local prompt = enter:FindFirstChild("MiniParkourPrompt", true)
     if prompt then
         prompt.MaxActivationDistance = math.huge
         prompt.RequiresLineOfSight = false
@@ -213,18 +205,15 @@ local function fireStartPrompt()
         return false
     end
 
-    -- teleport to the prompt's part first, in case the game validates distance server-side
     local promptPart = prompt.Parent
     if promptPart and not promptPart:IsA("BasePart") then
         promptPart = promptPart:FindFirstAncestorWhichIsA("BasePart")
     end
     if promptPart and promptPart:IsA("BasePart") then
         teleportTo(promptPart)
-        task.wait(0.2) -- let the position replicate before firing
+        task.wait(0.2)
     end
 
-    -- some games disable prompts based on real distance via their own script;
-    -- force it back on every time we're about to fire it
     pcall(function()
         prompt.Enabled = true
     end)
@@ -238,7 +227,6 @@ local function fireStartPrompt()
     })
 
     if usedExploit then
-        -- fire a few times in case the first call doesn't register
         for i = 1, 3 do
             local ok = pcall(function()
                 fireproximityprompt(prompt)
@@ -252,7 +240,6 @@ local function fireStartPrompt()
     end
 
     if not usedExploit then
-        -- fallback: simulate holding the prompt manually
         for i = 1, 2 do
             pcall(function()
                 prompt.Enabled = true
@@ -267,7 +254,6 @@ local function fireStartPrompt()
     return true
 end
 
--- ===== Auto Farm (repeats: prompt -> checkpoint 1 -> wait 5s -> auto complete -> repeat) =====
 local farmRunning = false
 
 local function startAutoFarm()
@@ -276,7 +262,7 @@ local function startAutoFarm()
     task.spawn(function()
         while farmRunning do
             fireStartPrompt()
-            task.wait(1) -- small buffer so the prompt/reset registers before teleporting
+            task.wait(1)
 
             if not farmRunning then break end
 
@@ -293,11 +279,11 @@ local function startAutoFarm()
 
             if not farmRunning then break end
 
-            runAutoAdvanceOnce() -- blocks here until it finishes all 35 checkpoints
+            runAutoAdvanceOnce()
 
             if not farmRunning then break end
 
-            task.wait(1) -- brief pause before the cycle repeats
+            task.wait(1)
         end
     end)
 end
@@ -328,7 +314,7 @@ Tab:Button({
             return
         end
 
-        print("--- Contents of " .. folder:GetFullName() .. " ---")
+        print("✦ Contents of " .. folder:GetFullName() .. " ✦")
         for _, child in ipairs(folder:GetChildren()) do
             print(child.ClassName .. " : " .. child.Name)
         end
