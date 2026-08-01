@@ -15,7 +15,7 @@ Window:EditOpenButton({
     Icon = "astroid",
     CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,
-    Color = ColorSequence.new( -- gradient
+    Color = ColorSequence.new(
         Color3.fromHex("C9E3FF")
     ),
     OnlyMobile = false,
