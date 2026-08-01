@@ -41,7 +41,7 @@ Window:OnClose(function()
 end)
 
 Window:Tag({
-    Title = "v1.1",
+    Title = "v1.2",
     Color = Color3.fromHex("#30ff6a"),
 })
 
@@ -58,6 +58,7 @@ local Tab = Window:Tab({
 local autoRunning = false
 local currentCheckpoint = 1
 
+-- Finds the player's Checkpoints folder automatically
 local function getParkourFolder()
     local folderName = "LOCAL_MINI_PARKOUR_" .. LocalPlayer.Name
     local mainFolder = Workspace:FindFirstChild(folderName)
@@ -66,6 +67,7 @@ local function getParkourFolder()
     return mainFolder:FindFirstChild("Checkpoints")
 end
 
+-- Unseats the player if currently sitting
 local function unseatPlayer()
     local character = LocalPlayer.Character
     if not character then return end
@@ -77,6 +79,7 @@ local function unseatPlayer()
     end
 end
 
+-- Teleports character to a given part
 local function teleportTo(part)
     local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local hrp = character:FindFirstChild("HumanoidRootPart")
@@ -94,6 +97,7 @@ local function teleportTo(part)
     end
 end
 
+-- Teleport by checkpoint number
 local function teleportToNumber(num)
     local folder = getParkourFolder()
     if not folder then return false end
@@ -106,46 +110,51 @@ local function teleportToNumber(num)
     return false
 end
 
-local function startAutoAdvance()
+-- Core auto-advance loop (blocking - runs until done or stopped)
+local function runAutoAdvanceOnce()
     autoRunning = true
     unseatPlayer()
 
-    task.spawn(function()
-        while autoRunning do
-            local success = teleportToNumber(currentCheckpoint)
+    while autoRunning do
+        local success = teleportToNumber(currentCheckpoint)
 
-            if success then
-                unseatPlayer()
+        if success then
+            unseatPlayer() -- unsit after every checkpoint teleport
 
-                WindUI:Notify({
-                    Title = "Auto Complete",
-                    Content = "Checkpoint " .. currentCheckpoint,
-                    Duration = 1,
-                })
-                currentCheckpoint += 1
+            WindUI:Notify({
+                Title = "Auto TP",
+                Content = "Checkpoint " .. currentCheckpoint,
+                Duration = 1,
+            })
+            currentCheckpoint += 1
 
-                if currentCheckpoint > 35 then
-                    autoRunning = false
-                    WindUI:Notify({
-                        Title = "Auto Complete",
-                        Content = "Finished Parkour",
-                        Duration = 3,
-                    })
-                    break
-                end
-            else
+            if currentCheckpoint > 35 then
                 autoRunning = false
                 WindUI:Notify({
-                    Title = "Auto TP Stopped",
-                    Content = "Checkpoint " .. currentCheckpoint .. " not found",
+                    Title = "Auto TP",
+                    Content = "Finished all checkpoints",
                     Duration = 3,
                 })
                 break
             end
-
-            task.wait(0.1)
+        else
+            -- checkpoint not found, stop to avoid spamming
+            autoRunning = false
+            WindUI:Notify({
+                Title = "Auto TP Stopped",
+                Content = "Checkpoint " .. currentCheckpoint .. " not found",
+                Duration = 3,
+            })
+            break
         end
-    end)
+
+        task.wait(0.1)
+    end
+end
+
+-- Non-blocking wrapper used by the manual toggle
+local function startAutoAdvance()
+    task.spawn(runAutoAdvanceOnce)
 end
 
 local function stopAutoAdvance()
@@ -164,14 +173,148 @@ local Paragraph = Tab:Paragraph({
 })
 
 Tab:Toggle({
-    Title = "Auto Complete Mini Parkour",
+    Title = "Auto Advance Checkpoints",
     Default = false,
     Callback = function(state)
         if state then
-            currentCheckpoint = 1
+            currentCheckpoint = 1 -- reset to start; remove this line to resume from last position
             startAutoAdvance()
         else
             stopAutoAdvance()
+        end
+    end
+})
+
+-- ===== ProximityPrompt (start/reset the run) =====
+local function getStartPrompt()
+    local progetto = Workspace:FindFirstChild("Progetto")
+    if not progetto then return nil end
+
+    local enter = progetto:FindFirstChild("MiniParkourEnter")
+    if not enter then return nil end
+
+    local prompt = enter:FindFirstChild("MiniParkourPrompt", true) -- recursive, in case it's nested
+    if prompt then
+        prompt.MaxActivationDistance = math.huge
+        prompt.RequiresLineOfSight = false
+    end
+
+    return prompt
+end
+
+local function fireStartPrompt()
+    local prompt = getStartPrompt()
+    if not prompt then
+        WindUI:Notify({
+            Title = "Auto Farm",
+            Content = "MiniParkourPrompt not found",
+            Duration = 3,
+        })
+        return false
+    end
+
+    -- teleport to the prompt's part first, in case the game validates distance server-side
+    local promptPart = prompt.Parent
+    if promptPart and not promptPart:IsA("BasePart") then
+        promptPart = promptPart:FindFirstAncestorWhichIsA("BasePart")
+    end
+    if promptPart and promptPart:IsA("BasePart") then
+        teleportTo(promptPart)
+        task.wait(0.2) -- let the position replicate before firing
+    end
+
+    -- some games disable prompts based on real distance via their own script;
+    -- force it back on every time we're about to fire it
+    pcall(function()
+        prompt.Enabled = true
+    end)
+
+    local usedExploit = typeof(fireproximityprompt) == "function"
+
+    WindUI:Notify({
+        Title = "Auto Farm",
+        Content = usedExploit and "Firing prompt (fireproximityprompt)" or "Firing prompt (hold simulation)",
+        Duration = 2,
+    })
+
+    if usedExploit then
+        -- fire a few times in case the first call doesn't register
+        for i = 1, 3 do
+            local ok = pcall(function()
+                fireproximityprompt(prompt)
+            end)
+            if not ok then
+                usedExploit = false
+                break
+            end
+            task.wait(0.15)
+        end
+    end
+
+    if not usedExploit then
+        -- fallback: simulate holding the prompt manually
+        for i = 1, 2 do
+            pcall(function()
+                prompt.Enabled = true
+                prompt:InputHoldBegin()
+                task.wait(prompt.HoldDuration + 0.1)
+                prompt:InputHoldEnd()
+            end)
+            task.wait(0.2)
+        end
+    end
+
+    return true
+end
+
+-- ===== Auto Farm (repeats: prompt -> checkpoint 1 -> wait 5s -> auto complete -> repeat) =====
+local farmRunning = false
+
+local function startAutoFarm()
+    farmRunning = true
+
+    task.spawn(function()
+        while farmRunning do
+            fireStartPrompt()
+            task.wait(1) -- small buffer so the prompt/reset registers before teleporting
+
+            if not farmRunning then break end
+
+            currentCheckpoint = 1
+            teleportToNumber(1)
+            unseatPlayer()
+
+            WindUI:Notify({
+                Title = "Auto Farm",
+                Content = "Waiting 2s before auto complete...",
+                Duration = 3,
+                task.wait(2)
+            })
+
+            if not farmRunning then break end
+
+            runAutoAdvanceOnce() -- blocks here until it finishes all 35 checkpoints
+
+            if not farmRunning then break end
+
+            task.wait(1) -- brief pause before the cycle repeats
+        end
+    end)
+end
+
+local function stopAutoFarm()
+    farmRunning = false
+    autoRunning = false
+end
+
+Tab:Toggle({
+    Title = "Auto Farm (Repeat)",
+    Default = false,
+    Callback = function(state)
+        if state then
+            startAutoFarm()
+        else
+            stopAutoFarm()
         end
     end
 })
