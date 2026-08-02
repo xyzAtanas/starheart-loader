@@ -41,7 +41,7 @@ Window:OnClose(function()
 end)
 
 Window:Tag({
-    Title = "v1.3",
+    Title = "v1.3.1",
     Color = Color3.fromHex("#30ff6a"),
 })
 
@@ -514,7 +514,7 @@ Minigame1Tab:Button({
     Title = "Reveal Slime",
     Callback = function()
         local player = game:GetService("Players").LocalPlayer
-        local gui = player:WaitForChild("PlayerGui"):FindFirstChild("MiniGame1MemoryGui")
+        local gui = player:WaitForChild("PlayerGui"):FindFirstChild("SlimeGameGui"):FindFirstChild("MemoryGameFrame")
 
         if not gui then return end
 
