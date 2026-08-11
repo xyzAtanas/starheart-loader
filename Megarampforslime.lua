@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local VirtualUser = game:GetService("VirtualUser")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -28,6 +29,11 @@ Window:EditOpenButton({
     Enabled = true,
 	Draggable = false
 })
+
+LocalPlayer.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new())
+end)
 
 Window:SetToggleKey(Enum.KeyCode.K)
 
