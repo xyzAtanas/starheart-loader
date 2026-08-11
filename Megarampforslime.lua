@@ -47,7 +47,7 @@ Window:OnClose(function()
 end)
 
 Window:Tag({
-    Title = "v1.3.2",
+    Title = "v1.3.3",
     Color = Color3.fromHex("#30ff6a"),
 })
 
