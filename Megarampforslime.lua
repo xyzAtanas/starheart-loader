@@ -41,12 +41,12 @@ Window:OnClose(function()
 end)
 
 Window:Tag({
-    Title = "v1.3.1",
+    Title = "v1.3.2",
     Color = Color3.fromHex("#30ff6a"),
 })
 
 local TweenService = game:GetService("TweenService")
-local part = workspace:WaitForChild("Progetto"):WaitForChild("Checkpoints"):WaitForChild("82")
+local part = workspace:WaitForChild("Progetto"):WaitForChild("Checkpoints"):WaitForChild("92")
 local targetPosition = Vector3.new(-5, 201, -1250)
 local moveTime = 0
 local tweenInfo = TweenInfo.new(
@@ -499,7 +499,7 @@ MainTab:Toggle({
 })
 
 MainTab:Button({
-    Title = "x500,000 luck every time",
+    Title = "x1,000,000 luck every time",
     Callback = function()
         tween:Play()
     end
