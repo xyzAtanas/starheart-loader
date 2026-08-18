@@ -50,11 +50,6 @@ Window:OnClose(function()
 	})
 end)
 
-Window:Tag({
-    Title = "v1.3.3",
-    Color = Color3.fromHex("#30ff6a"),
-})
-
 if currentScript then
     loadstring(game:HttpGet(currentScript))()
 else
