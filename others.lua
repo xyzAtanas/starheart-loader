@@ -24,11 +24,6 @@ Window:EditOpenButton({
 
 Window:SetToggleKey(Enum.KeyCode.K)
 
-Window:Tag({
-    Title = "v4.1",
-    Color = Color3.fromHex("#30ff6a"),
-})
-
 Window:OnClose(function()
     WindUI:Notify({
     	Title = "Want to open the UI again?",
