@@ -5,52 +5,6 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
-local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
-
-local Window = WindUI:CreateWindow({
-    Title = "Starheart - Mega Ramp for Slime",
-    Icon = "star",
-    Author = "By Atanas",
-    Folder = "Starheart",
-    Size = UDim2.fromOffset(580, 460),
-    Transparent = true,
-    Theme = "Dark",
-})
-
-Window:EditOpenButton({
-    Title = "Open Starheart",
-    Icon = "star",
-    CornerRadius = UDim.new(0,16),
-    StrokeThickness = 2,
-    Color = ColorSequence.new(
-        Color3.fromHex("C9E3FF")
-    ),
-    OnlyMobile = false,
-    Enabled = true,
-	Draggable = false
-})
-
-LocalPlayer.Idled:Connect(function()
-    VirtualUser:CaptureController()
-    VirtualUser:ClickButton2(Vector2.new())
-end)
-
-Window:SetToggleKey(Enum.KeyCode.K)
-
-Window:OnClose(function()
-    WindUI:Notify({
-    	Title = "Want to open the UI again?",
-    	Content = "Press K on your keyboard!",
-    	Duration = 3,
-    	Icon = "door-open",
-	})
-end)
-
-Window:Tag({
-    Title = "v1.3.3",
-    Color = Color3.fromHex("#30ff6a"),
-})
-
 local TweenService = game:GetService("TweenService")
 local part = workspace:WaitForChild("Progetto"):WaitForChild("Checkpoints"):WaitForChild("92")
 local targetPosition = Vector3.new(-5, 201, -1250)
