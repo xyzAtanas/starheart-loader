@@ -1,4 +1,3 @@
--- NOT TESTED
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 local Window = WindUI:CreateWindow({
     Title = "Starheart - A Block's Journey",
@@ -24,11 +23,6 @@ Window:EditOpenButton({
 })
 
 Window:SetToggleKey(Enum.KeyCode.K)
-
-Window:Tag({
-    Title = "v4.1",
-    Color = Color3.fromHex("#30ff6a"),
-})
 
 Window:OnClose(function()
     WindUI:Notify({
