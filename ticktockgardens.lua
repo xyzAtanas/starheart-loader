@@ -2,7 +2,7 @@
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 local Window = WindUI:CreateWindow({
     Title = "Starheart - Tick Tock Gardens",
-    Icon = "astroid",
+    Icon = "star",
     Author = "by Atanas",
     Folder = "Starheart",
     Size = UDim2.fromOffset(580, 460),
